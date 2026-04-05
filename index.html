@@ -20,23 +20,11 @@
     .header-logo { display: flex; flex-direction: column; gap: 3px; }
     .header-title {
       font-family: 'Shippori Mincho', serif;
-      font-size: 26px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 6px;
-      line-height: 1;
+      font-size: 26px; font-weight: 700;
+      color: #fff; letter-spacing: 6px; line-height: 1;
     }
     .header-sub { font-size: 10px; color: rgba(255,255,255,0.65); letter-spacing: 3px; font-weight: 300; margin-top: 4px; }
-    .badge {
-      margin-left: auto;
-      background: #fff;
-      color: #f26a00;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 5px 14px;
-      border-radius: 2px;
-      letter-spacing: 2px;
-    }
+    .badge { margin-left: auto; background: #fff; color: #f26a00; font-size: 10px; font-weight: 700; padding: 5px 14px; border-radius: 2px; letter-spacing: 2px; }
 
     .search-area {
       background: #fff;
@@ -54,77 +42,81 @@
       border: 1.5px solid #f5c8a0; border-radius: 4px;
       font-size: 14px; font-family: 'Noto Sans JP', sans-serif; font-weight: 300;
       background: #fffaf6; outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s; color: #2a1a0e;
-      letter-spacing: 0.5px;
+      transition: border-color 0.2s, box-shadow 0.2s; color: #2a1a0e; letter-spacing: 0.5px;
     }
     .search-input:focus { border-color: #f26a00; box-shadow: 0 0 0 3px rgba(242,106,0,0.1); background: #fff; }
     .search-input::placeholder { color: #d4b090; font-weight: 300; }
     .search-ico { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: #f26a00; opacity: 0.5; pointer-events: none; }
 
-    .status-bar { max-width: 1280px; margin: 0 auto; padding: 12px 40px 4px; font-size: 11px; color: #c8a070; min-height: 32px; letter-spacing: 0.5px; }
+    .status-bar { max-width: 960px; margin: 0 auto; padding: 12px 40px 6px; font-size: 11px; color: #c8a070; min-height: 32px; letter-spacing: 0.5px; }
     .status-bar b { color: #f26a00; font-weight: 500; }
 
-    .results { max-width: 1280px; margin: 0 auto; padding: 8px 32px 60px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    /* リスト表示 */
+    .list-wrap { max-width: 960px; margin: 0 auto; padding: 0 40px 60px; }
 
-    .card {
-      background: #fff;
-      border: 1px solid #f0dcc8;
-      border-radius: 6px;
-      overflow: hidden;
-      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-      position: relative;
+    .list-header {
+      display: grid;
+      grid-template-columns: 1fr 160px 120px;
+      gap: 0;
+      padding: 8px 20px;
+      font-size: 10px;
+      color: #c8a070;
+      letter-spacing: 1.5px;
+      border-bottom: 1px solid #f0dcc8;
     }
-    .card::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #f26a00, #ffaa50, #f26a00);
-      opacity: 0;
-      transition: opacity 0.2s;
+
+    .list-item {
+      display: grid;
+      grid-template-columns: 1fr 160px 120px;
+      gap: 0;
+      padding: 14px 20px;
+      border-bottom: 1px solid #f5ece0;
+      align-items: center;
+      transition: background 0.15s;
+      cursor: default;
     }
-    .card:hover { border-color: #f26a00; transform: translateY(-4px); box-shadow: 0 12px 32px rgba(242,106,0,0.12); }
-    .card:hover::after { opacity: 1; }
+    .list-item:hover { background: #fff8f2; }
+    .list-item:last-child { border-bottom: none; }
 
-    .card-body { padding: 16px 16px 18px; }
-    .card-number {
-      font-size: 9px; color: #fff; background: #f26a00;
-      display: inline-block; padding: 3px 9px; border-radius: 2px;
-      margin-bottom: 10px; letter-spacing: 1px; font-family: monospace;
+    .item-name { font-size: 14px; font-weight: 400; color: #2a1a0e; line-height: 1.5; letter-spacing: 0.3px; }
+    .item-number {
+      font-size: 11px; color: #f26a00;
+      font-family: monospace; letter-spacing: 0.5px;
+      display: block; margin-top: 3px; font-weight: 300;
     }
-    .card-name { font-size: 13px; font-weight: 400; color: #2a1a0e; margin-bottom: 14px; line-height: 1.65; min-height: 42px; letter-spacing: 0.3px; }
+    .item-category { font-size: 11px; color: #c8a070; font-weight: 300; }
+    .item-price { font-size: 20px; font-weight: 700; color: #f26a00; text-align: right; letter-spacing: -0.5px; }
+    .item-price-yen { font-size: 12px; font-weight: 500; margin-right: 1px; }
+    .item-price-none { font-size: 13px; color: #ddd; font-weight: 300; }
+    .item-label { font-size: 10px; color: #c8a070; font-weight: 300; text-align: right; display: block; letter-spacing: 1px; }
 
-    .divider { height: 1px; background: linear-gradient(90deg, transparent, #f0dcc8, transparent); margin-bottom: 14px; }
-
-    .price-box { display: flex; align-items: baseline; justify-content: space-between; }
-    .price-label { font-size: 10px; color: #c8a070; font-weight: 300; letter-spacing: 1.5px; }
-    .price-value { font-size: 22px; font-weight: 700; color: #f26a00; line-height: 1; }
-    .price-yen { font-size: 13px; margin-right: 2px; font-weight: 500; }
-    .price-none { font-size: 14px; color: #ddd; font-weight: 300; }
-
-    .idle-msg { grid-column: 1/-1; text-align: center; padding: 100px 20px 80px; }
-    .idle-icon { width: 56px; height: 56px; display: block; margin: 0 auto 20px; opacity: 0.25; }
+    .idle-msg { text-align: center; padding: 100px 20px 80px; }
+    .idle-icon { width: 52px; height: 52px; display: block; margin: 0 auto 20px; opacity: 0.2; }
     .idle-msg p { font-size: 13px; color: #c8a070; font-weight: 300; letter-spacing: 2px; }
 
-    .loading { grid-column: 1/-1; text-align: center; padding: 100px 20px; color: #c8a070; font-size: 12px; letter-spacing: 2px; font-weight: 300; }
+    .loading { text-align: center; padding: 100px 20px; color: #c8a070; font-size: 12px; letter-spacing: 2px; font-weight: 300; }
     .spinner { width: 32px; height: 32px; border: 1.5px solid #f5dfc8; border-top-color: #f26a00; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 20px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .error-msg { grid-column: 1/-1; background: #fff8f2; border: 1px solid #f5dfc8; border-radius: 4px; padding: 24px 28px; margin: 8px; font-size: 13px; color: #c45200; line-height: 2; font-weight: 300; }
-    .empty { grid-column: 1/-1; text-align: center; padding: 100px 20px; color: #c8a070; font-size: 13px; letter-spacing: 2px; font-weight: 300; }
+    .error-msg { background: #fff8f2; border: 1px solid #f5dfc8; border-radius: 4px; padding: 24px 28px; margin: 8px; font-size: 13px; color: #c45200; line-height: 2; font-weight: 300; }
+    .empty { text-align: center; padding: 100px 20px; color: #c8a070; font-size: 13px; letter-spacing: 2px; font-weight: 300; }
 
-    .more-wrap { grid-column: 1/-1; text-align: center; padding: 16px 0 24px; }
+    .more-wrap { text-align: center; padding: 24px 0; }
     .more-btn { background: transparent; color: #f26a00; border: 1.5px solid #f26a00; padding: 12px 40px; border-radius: 3px; font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; cursor: pointer; letter-spacing: 2px; transition: background 0.2s, color 0.2s; }
     .more-btn:hover { background: #f26a00; color: #fff; }
 
     mark { background: rgba(242,106,0,0.12); color: #c45200; border-radius: 2px; padding: 0 1px; }
 
-    @media (max-width: 600px) {
+    @media (max-width: 640px) {
       .header { padding: 16px 20px; }
       .header-title { font-size: 20px; letter-spacing: 4px; }
       .search-area { padding: 14px 20px; top: 62px; }
       .status-bar { padding: 10px 20px 4px; }
-      .results { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; padding: 8px 12px 40px; }
+      .list-wrap { padding: 0 12px 40px; }
+      .list-header { grid-template-columns: 1fr 100px; }
+      .list-header .col-num { display: none; }
+      .list-item { grid-template-columns: 1fr 100px; }
+      .item-number { display: none; }
       .updated-at { display: none; }
     }
   </style>
@@ -154,7 +146,8 @@
   </div>
 
   <div class="status-bar" id="status"></div>
-  <div class="results" id="results">
+
+  <div class="list-wrap" id="list-wrap">
     <div class="loading"><div class="spinner"></div>読み込み中...</div>
   </div>
 
@@ -163,7 +156,7 @@
 
     let allCards = [];
     let filtered = [];
-    let displayCount = 100;
+    let displayCount = 200;
     let dataLoaded = false;
 
     function formatPrice(str) {
@@ -181,7 +174,7 @@
 
     function showIdle() {
       document.getElementById('status').innerHTML = '全 <b>' + allCards.length.toLocaleString() + '</b> 件 読み込み済み';
-      document.getElementById('results').innerHTML =
+      document.getElementById('list-wrap').innerHTML =
         '<div class="idle-msg">' +
         '<svg class="idle-icon" viewBox="0 0 24 24" fill="none" stroke="#f26a00" stroke-width="1">' +
         '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
@@ -213,7 +206,7 @@
         dataLoaded = true;
         showIdle();
       } catch(e) {
-        document.getElementById('results').innerHTML = '<div class="error-msg">読み込みに失敗しました。<br>エラー: ' + e.message + '</div>';
+        document.getElementById('list-wrap').innerHTML = '<div class="error-msg">読み込みに失敗しました。<br>エラー: ' + e.message + '</div>';
         document.getElementById('status').textContent = '';
       }
     }
@@ -221,35 +214,50 @@
     function doSearch() {
       if (!dataLoaded) return;
       const q = document.getElementById('q').value.toLowerCase().trim();
-      displayCount = 100;
+      displayCount = 200;
       if (!q) { showIdle(); return; }
+
       filtered = allCards.filter(function(c) {
         return c.name.toLowerCase().includes(q) || c.number.toLowerCase().includes(q);
       });
+
       document.getElementById('status').innerHTML = '"' + q + '" の検索結果：<b>' + filtered.length.toLocaleString() + '</b> 件';
-      renderCards(q);
+      renderList(q);
     }
 
-    function renderCards(q) {
-      const el = document.getElementById('results');
-      if (!filtered.length) { el.innerHTML = '<div class="empty">該当するカードが見つかりませんでした</div>'; return; }
+    function renderList(q) {
+      const el = document.getElementById('list-wrap');
+      if (!filtered.length) {
+        el.innerHTML = '<div class="empty">該当するカードが見つかりませんでした</div>';
+        return;
+      }
       const slice = filtered.slice(0, displayCount);
-      el.innerHTML = slice.map(function(c) {
-        return '<div class="card"><div class="card-body">' +
-          (c.number ? '<div class="card-number">' + highlight(c.number, q) + '</div>' : '') +
-          '<div class="card-name">' + highlight(c.name, q) + '</div>' +
-          '<div class="divider"></div>' +
-          '<div class="price-box"><div class="price-label">買 取 価 格</div>' +
-          '<div class="price-value">' +
-          (c.price ? '<span class="price-yen">¥</span>' + c.price : '<span class="price-none">—</span>') +
-          '</div></div></div></div>';
-      }).join('') +
-      (filtered.length > displayCount ? '<div class="more-wrap"><button class="more-btn" onclick="loadMore()">さらに表示　残り ' + (filtered.length - displayCount).toLocaleString() + ' 件</button></div>' : '');
+      const header = '<div class="list-header"><div>カード名</div><div class="col-num">型番</div><div style="text-align:right">買取価格</div></div>';
+      const rows = slice.map(function(c) {
+        return '<div class="list-item">' +
+          '<div class="item-name">' + highlight(c.name, q) +
+          (c.number ? '<span class="item-number">' + highlight(c.number, q) + '</span>' : '') +
+          '</div>' +
+          '<div class="item-category">' + (c.number ? '' : '') + '</div>' +
+          '<div>' +
+            '<span class="item-label">買取価格</span>' +
+            '<div class="item-price">' +
+            (c.price ? '<span class="item-price-yen">¥</span>' + c.price : '<span class="item-price-none">—</span>') +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      const more = filtered.length > displayCount
+        ? '<div class="more-wrap"><button class="more-btn" onclick="loadMore()">さらに表示　残り ' + (filtered.length - displayCount).toLocaleString() + ' 件</button></div>'
+        : '';
+
+      el.innerHTML = header + rows + more;
     }
 
     function loadMore() {
-      displayCount += 100;
-      renderCards(document.getElementById('q').value.toLowerCase().trim());
+      displayCount += 200;
+      renderList(document.getElementById('q').value.toLowerCase().trim());
     }
 
     loadData();
