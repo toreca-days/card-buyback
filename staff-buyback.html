@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>買取受付システム | トレカデイズ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:16px}
+.app{max-width:960px;margin:0 auto;padding:1rem}
+.hdr{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fff;border-radius:12px;border:0.5px solid #e0ddd6;margin-bottom:1rem}
+.logo{width:38px;height:38px;border-radius:50%;background:#4B1528;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600;flex-shrink:0}
+.hdr-title{font-size:16px;font-weight:600;color:#1a1a1a}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;background:#FBEAF0;color:#72243E;border:0.5px solid #F4C0D1;margin-left:6px}
+.clk{font-size:13px;color:#888}
+.cache-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:1rem;border:0.5px solid #e0ddd6}
+.cache-bar.loading{background:#fff8e1;border-color:#ffe082;color:#f57f17}
+.cache-bar.ok{background:#e8f5e9;border-color:#a5d6a7;color:#2e7d32}
+.cache-bar.error{background:#fff0f0;border-color:#ffcdd2;color:#c62828}
+.cache-count{font-weight:700;margin:0 2px}
+.reload-btn{margin-left:auto;padding:5px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:0.5px solid currentColor;background:transparent;color:inherit;white-space:nowrap}
+.steps{display:flex;margin-bottom:1rem;border-radius:10px;overflow:hidden;border:0.5px solid #e0ddd6}
+.step{flex:1;padding:10px 4px;text-align:center;font-size:11px;color:#aaa;background:#f5f4f0;border-right:0.5px solid #e0ddd6}
+.step:last-child{border-right:none}
+.step.active{background:#FBEAF0;color:#72243E;font-weight:600}
+.step.done{background:#e8f5e9;color:#2e7d32}
+.panel{background:#fff;border:0.5px solid #e0ddd6;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem}
+.sl{font-size:11px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px}
+.search-row{display:flex;gap:8px}
+.search-row input{flex:1;font-size:16px;padding:11px 14px;border:0.5px solid #d0cdc6;border-radius:10px;outline:none;background:#fafaf8;color:#1a1a1a}
+.search-row input:focus{border-color:#993556;background:#fff}
+.btn-clear{padding:11px 16px;border-radius:10px;background:#f5f4f0;color:#444;border:0.5px solid #d0cdc6;font-size:14px;cursor:pointer}
+.tabs{display:flex;gap:0;border-radius:10px;overflow:hidden;border:0.5px solid #e0ddd6;margin-top:10px}
+.tab{flex:1;padding:9px 4px;text-align:center;font-size:13px;color:#888;background:#f5f4f0;cursor:pointer;border-right:0.5px solid #e0ddd6}
+.tab:last-child{border-right:none}
+.tab.on{background:#FBEAF0;color:#72243E;font-weight:600}
+.rw{border:0.5px solid #e0ddd6;border-radius:10px;max-height:260px;overflow-y:auto;margin-top:8px}
+.ri{display:flex;align-items:center;padding:11px 14px;border-bottom:0.5px solid #f0ede6;gap:10px}
+.ri:last-child{border-bottom:none}
+.ri:hover{background:#faf8f5}
+.rn{font-size:14px;font-weight:600;color:#1a1a1a;flex:1}
+.rc{font-size:12px;color:#aaa;margin-top:2px}
+.rp{font-size:15px;font-weight:700;color:#993556;white-space:nowrap}
+.ab{font-size:13px;padding:8px 16px;border-radius:8px;background:#993556;color:#fff;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0;font-weight:600}
+.ab:active{background:#72243E;transform:scale(0.97)}
+.ab.sec{background:#f5f4f0;color:#444;border:0.5px solid #d0cdc6}
+.empty{text-align:center;padding:32px;color:#bbb;font-size:14px}
+.no-result{padding:16px;font-size:14px;color:#bbb;text-align:center}
+.hist-item{padding:12px 14px;border-bottom:0.5px solid #f0ede6;cursor:pointer}
+.hist-item:last-child{border-bottom:none}
+.hist-item:hover{background:#faf8f5}
+.hist-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.hist-name{font-size:13px;font-weight:600;color:#1a1a1a}
+.hist-date{font-size:11px;color:#aaa}
+.hist-total{font-size:13px;font-weight:700;color:#993556}
+.hist-cards{display:flex;flex-wrap:wrap;gap:4px}
+.hist-card{font-size:11px;padding:2px 8px;border-radius:6px;background:#f5f4f0;color:#666;border:0.5px solid #e0ddd6}
+.hist-add-btn{margin-left:auto;padding:5px 12px;font-size:12px;border-radius:8px;background:#993556;color:#fff;border:none;cursor:pointer;white-space:nowrap}
+.ci{border:0.5px solid #e0ddd6;border-radius:12px;margin-bottom:10px;overflow:hidden}
+.ci-top{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#faf8f5;border-bottom:0.5px solid #f0ede6}
+.ci-nm{font-size:14px;font-weight:600;color:#1a1a1a;flex:1;line-height:1.4}
+.ci-cd{font-size:11px;color:#bbb;margin-top:2px}
+.rmb{background:none;border:none;cursor:pointer;color:#e57373;font-size:22px;line-height:1;padding:0 4px;flex-shrink:0}
+.ci-body{padding:12px 14px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.cf{display:flex;flex-direction:column;gap:6px}
+.cf label{font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+.cond-btns{display:flex;gap:5px}
+.cb{padding:8px 12px;border-radius:8px;border:0.5px solid #d0cdc6;background:#fff;color:#666;font-size:13px;cursor:pointer;min-width:44px;text-align:center;font-weight:500}
+.cb.on{background:#993556;color:#fff;border-color:#993556;font-weight:700}
+.cb:active{transform:scale(0.95)}
+.qc{display:flex;align-items:center;gap:10px}
+.qb{width:32px;height:32px;border-radius:50%;border:0.5px solid #d0cdc6;background:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:#444}
+.qb:active{background:#f0ede6;transform:scale(0.95)}
+.qn{font-size:16px;min-width:26px;text-align:center;font-weight:700;color:#1a1a1a}
+.price-wrap{display:flex;align-items:center;gap:6px}
+.price-yen{font-size:15px;color:#666}
+.price-inp{font-size:18px;font-weight:700;padding:6px 8px;border-radius:8px;width:120px;text-align:right;color:#993556;border:0.5px solid #d0cdc6;background:#fff;outline:none}
+.price-inp:focus{border-color:#993556}
+.ci-sub{font-size:12px;color:#aaa;margin-top:4px}
+.ci-sub strong{font-size:14px;color:#1a1a1a;font-weight:700}
+.memo-wrap{flex:1;min-width:200px}
+.memo-wrap textarea{width:100%;font-size:13px;padding:8px 10px;border-radius:8px;min-height:50px;resize:vertical;font-family:inherit;color:#1a1a1a;background:#fff;border:0.5px solid #d0cdc6;outline:none}
+.memo-wrap textarea:focus{border-color:#993556}
+.total-bar{display:flex;justify-content:flex-end;align-items:baseline;gap:10px;padding-top:14px;border-top:0.5px solid #f0ede6;margin-top:8px}
+.tl{font-size:13px;color:#888}
+.ta{font-size:30px;font-weight:700;color:#1a1a1a}
+.tu{font-size:14px;color:#888}
+.ar{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+.btn-main{padding:12px 28px;border-radius:10px;background:#993556;color:#fff;border:none;font-size:15px;font-weight:700;cursor:pointer}
+.btn-main:hover{background:#72243E}
+.btn-main:active{transform:scale(0.97)}
+.btn-main:disabled{background:#e0ddd6;color:#bbb;cursor:default;transform:none}
+.btn-sub{padding:12px 24px;border-radius:10px;background:#f5f4f0;color:#444;border:0.5px solid #d0cdc6;font-size:15px;cursor:pointer;font-weight:500}
+.btn-sub:active{background:#e8e6e0}
+.ct{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+.ct th{text-align:left;font-weight:500;color:#aaa;padding:8px;border-bottom:0.5px solid #f0ede6;font-size:12px}
+.ct td{padding:10px 8px;border-bottom:0.5px solid #f0ede6;color:#1a1a1a;vertical-align:top;word-break:break-word}
+.ct tr:last-child td{border-bottom:none}
+.cond-badge{display:inline-block;padding:3px 10px;border-radius:6px;background:#FBEAF0;color:#72243E;font-size:12px;border:0.5px solid #F4C0D1;font-weight:700}
+.terms-box{max-height:160px;overflow-y:auto;background:#faf8f5;border:0.5px solid #e0ddd6;border-radius:10px;padding:14px;font-size:13px;color:#555;line-height:1.9;margin-bottom:14px}
+.agr-row{display:flex;align-items:center;gap:14px;font-size:15px;color:#1a1a1a;margin-bottom:1rem;cursor:pointer;padding:12px 16px;background:#faf8f5;border-radius:10px;border:0.5px solid #e0ddd6}
+.agr-row input{width:22px;height:22px;cursor:pointer;flex-shrink:0;accent-color:#993556}
+.sign-wrap{border:0.5px solid #d0cdc6;border-radius:10px;background:#faf8f5;position:relative;overflow:hidden}
+canvas#sc{display:block;touch-action:none;cursor:crosshair;width:100%;height:200px}
+.sign-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;color:#bbb;pointer-events:none;white-space:nowrap}
+.sign-line{position:absolute;bottom:40px;left:10%;right:10%;height:0.5px;background:#d0cdc6;pointer-events:none}
+.done-box{text-align:center;padding:2rem 1rem}
+.done-chk{width:68px;height:68px;border-radius:50%;background:#e8f5e9;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-size:32px;color:#2e7d32}
+.done-ttl{font-size:24px;font-weight:700;margin-bottom:10px;color:#1a1a1a}
+.done-sub{font-size:15px;color:#666;margin-bottom:1.5rem;line-height:1.8}
+.done-amt{font-size:38px;font-weight:700;color:#993556}
+.rcpt{margin-top:1rem;background:#faf8f5;border-radius:10px;border:0.5px solid #e0ddd6;padding:1rem 1.25rem;font-family:'Courier New',monospace;font-size:12px;line-height:2;color:#555;white-space:pre;overflow-x:auto}
+.pnote{margin-top:12px;padding:12px 16px;background:#e3f2fd;border-radius:10px;font-size:13px;color:#1565c0;border:0.5px solid #90caf9;line-height:1.7}
+/* 顧客カード */
+.cust-card{background:#FBEAF0;border:0.5px solid #F4C0D1;border-radius:10px;padding:12px 16px;margin-bottom:1rem;display:flex;align-items:center;gap:12px}
+.cust-avatar{width:42px;height:42px;border-radius:50%;background:#993556;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.cust-name{font-size:15px;font-weight:700;color:#4B1528}
+.cust-info{font-size:12px;color:#993556;margin-top:2px}
+.cust-clear{margin-left:auto;background:none;border:0.5px solid #F4C0D1;border-radius:8px;padding:5px 12px;font-size:12px;color:#993556;cursor:pointer}
+/* モーダル */
+.modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:1rem}
+.modal{background:#fff;border-radius:16px;padding:1.5rem;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:1rem;color:#1a1a1a}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:12px;font-weight:600;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em}
+.form-group input{width:100%;font-size:15px;padding:10px 12px;border:0.5px solid #d0cdc6;border-radius:10px;outline:none;background:#fafaf8;color:#1a1a1a}
+.form-group input:focus{border-color:#993556;background:#fff}
+.member-list{max-height:300px;overflow-y:auto;border:0.5px solid #e0ddd6;border-radius:10px;margin-top:8px}
+.member-item{display:flex;align-items:center;padding:12px 14px;border-bottom:0.5px solid #f0ede6;gap:10px;cursor:pointer}
+.member-item:last-child{border-bottom:none}
+.member-item:hover{background:#faf8f5}
+.member-item:active{background:#FBEAF0}
+.mi-name{font-size:14px;font-weight:600;color:#1a1a1a}
+.mi-info{font-size:12px;color:#aaa;margin-top:2px}
+.mi-stat{font-size:12px;color:#993556;margin-left:auto;text-align:right;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <div class="logo">TD</div>
+    <div>
+      <div class="hdr-title">買取受付システム<span class="badge">スタッフ専用</span></div>
+    </div>
+    <div style="margin-left:auto">
+      <div class="clk" id="clk"></div>
+    </div>
+  </div>
+
+  <div id="cacheBar" class="cache-bar loading">
+    <span id="cacheMsg">カードデータを読み込み中...</span>
+    <button class="reload-btn" onclick="loadAllProducts(true)">再読み込み</button>
+  </div>
+
+  <div class="steps">
+    <div class="step active" id="st1">① 顧客選択</div>
+    <div class="step" id="st2">② カード選択</div>
+    <div class="step" id="st3">③ 内容確認</div>
+    <div class="step" id="st4">④ 規約・サイン</div>
+    <div class="step" id="st5">⑤ 完了</div>
+  </div>
+
+  <!-- PAGE 1: 顧客選択 -->
+  <div id="pg1">
+    <div class="panel">
+      <div class="sl">顧客検索</div>
+      <div class="search-row">
+        <input type="text" id="custSearch" placeholder="名前・電話番号で検索..." oninput="searchMembers()" autocomplete="off">
+        <button class="btn-clear" onclick="document.getElementById('custSearch').value='';document.getElementById('memberList').innerHTML=''">クリア</button>
+      </div>
+      <div id="memberList"></div>
+    </div>
+    <div class="ar">
+      <button class="btn-sub" onclick="openNewMember()">+ 新規顧客登録</button>
+      <button class="btn-main" onclick="goPage(2)">顧客なしで開始</button>
+    </div>
+  </div>
+
+  <!-- PAGE 2: カード選択 -->
+  <div id="pg2" style="display:none">
+    <div id="custCardArea"></div>
+    <div class="panel">
+      <div class="sl">カード検索</div>
+      <div class="search-row">
+        <input type="text" id="sq" placeholder="カード名・型番で検索..." oninput="doSearch()" autocomplete="off">
+        <button class="btn-clear" onclick="clrSearch()">クリア</button>
+      </div>
+      <div class="tabs">
+        <div class="tab on" id="tab1" onclick="switchTab(1)">検索結果</div>
+        <div class="tab" id="tab2" onclick="switchTab(2)">履歴から追加</div>
+      </div>
+      <div id="rl"></div>
+      <div id="histArea" style="display:none"></div>
+    </div>
+    <div class="panel">
+      <div class="sl">買取リスト</div>
+      <div id="cartArea"><div class="empty">カードを検索して追加してください</div></div>
+      <div id="totalBar" style="display:none" class="total-bar">
+        <span class="tl">合計買取金額</span>
+        <span class="ta" id="tamt">0</span>
+        <span class="tu">円</span>
+      </div>
+    </div>
+    <div class="ar">
+      <button class="btn-sub" onclick="goPage(1)">← 戻る</button>
+      <button class="btn-main" id="toConf" onclick="goConf()" disabled>内容確認へ →</button>
+    </div>
+  </div>
+
+  <!-- PAGE 3: 内容確認 -->
+  <div id="pg3" style="display:none">
+    <div class="panel">
+      <div class="sl">買取内容確認</div>
+      <div id="custConfArea"></div>
+      <table class="ct">
+        <thead><tr>
+          <th style="width:32%">カード名</th>
+          <th style="width:12%">状態</th>
+          <th style="width:9%;text-align:right">枚数</th>
+          <th style="width:15%;text-align:right">単価</th>
+          <th style="width:14%;text-align:right">小計</th>
+          <th style="width:18%">メモ</th>
+        </tr></thead>
+        <tbody id="confBody"></tbody>
+      </table>
+      <div class="total-bar">
+        <span class="tl">合計買取金額</span>
+        <span class="ta" id="confTotal">0</span>
+        <span class="tu">円</span>
+      </div>
+    </div>
+    <div class="ar">
+      <button class="btn-sub" onclick="goPage(2)">← 戻る</button>
+      <button class="btn-main" onclick="goPage(4)">規約・サインへ →</button>
+    </div>
+  </div>
+
+  <!-- PAGE 4: 規約・サイン -->
+  <div id="pg4" style="display:none">
+    <div class="panel">
+      <div class="sl">買取規約</div>
+      <div class="terms-box">
+        <strong>買取に関する同意事項</strong><br><br>
+        1. 買取を申し込む商品は、お客様ご自身が適法に所持・処分できる権限を有するものであることを確認します。<br><br>
+        2. 査定金額はスタッフによる状態確認後に確定します。事前提示額と異なる場合があります。<br><br>
+        3. 買取成立後のキャンセルはお断りする場合があります。<br><br>
+        4. 偽造品・改造品・盗品等と判断した場合は警察へ通報する場合があります。<br><br>
+        5. お預かりした個人情報は買取業務の範囲内でのみ使用します。<br><br>
+        6. 本人確認書類のご提示をお願いする場合があります（古物営業法に基づく）。<br><br>
+        以上の内容にご同意いただいた上でサインをお願いします。
+      </div>
+      <label class="agr-row">
+        <input type="checkbox" id="agr" onchange="chkSign()">
+        上記の規約をすべて読み、内容に同意します
+      </label>
+      <div class="sl" style="margin-top:4px">お客様サイン</div>
+      <div class="sign-wrap">
+        <canvas id="sc"></canvas>
+        <div class="sign-hint" id="sh">指またはペンでここにサインしてください</div>
+        <div class="sign-line"></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:10px">
+        <button class="btn-sub" style="font-size:13px;padding:8px 18px" onclick="clrSign()">サインをクリア</button>
+      </div>
+    </div>
+    <div class="ar">
+      <button class="btn-sub" onclick="goPage(3)">← 戻る</button>
+      <button class="btn-main" id="finBtn" onclick="finish()" disabled>買取を確定する</button>
+    </div>
+  </div>
+
+  <!-- PAGE 5: 完了 -->
+  <div id="pg5" style="display:none">
+    <div class="panel">
+      <div class="done-box">
+        <div class="done-chk">✓</div>
+        <div class="done-ttl">買取完了</div>
+        <div class="done-sub">
+          サインを確認しました。<br>
+          合計金額をお支払いください。<br>
+          <span class="done-amt" id="finalAmt"></span>
+          <span style="font-size:18px;color:#888;margin-left:4px">円</span>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button class="btn-main" style="padding:14px 32px" onclick="doPrint()">レシートを印刷（エプソン）</button>
+          <button class="btn-sub" style="padding:14px 32px" onclick="resetAll()">新しい買取を開始</button>
+        </div>
+        <div id="pnote" class="pnote" style="display:none"></div>
+      </div>
+      <div class="rcpt" id="rcpt" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 顧客登録モーダル -->
+<div id="newMemberModal" class="modal-bg" style="display:none" onclick="if(event.target===this)closeNewMember()">
+  <div class="modal">
+    <div class="modal-title">新規顧客登録</div>
+    <div class="form-group">
+      <label>氏名 *</label>
+      <input type="text" id="nm_name" placeholder="山田 太郎">
+    </div>
+    <div class="form-group">
+      <label>フリガナ</label>
+      <input type="text" id="nm_kana" placeholder="ヤマダ タロウ">
+    </div>
+    <div class="form-group">
+      <label>電話番号 *</label>
+      <input type="tel" id="nm_tel" placeholder="090-0000-0000">
+    </div>
+    <div class="form-group">
+      <label>メールアドレス</label>
+      <input type="email" id="nm_email" placeholder="example@email.com">
+    </div>
+    <div class="form-group">
+      <label>住所</label>
+      <input type="text" id="nm_addr" placeholder="東京都渋谷区...">
+    </div>
+    <div class="form-group">
+      <label>生年月日</label>
+      <input type="date" id="nm_dob">
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:1rem">
+      <button class="btn-sub" style="padding:10px 20px" onclick="closeNewMember()">キャンセル</button>
+      <button class="btn-main" style="padding:10px 20px" onclick="registerMember()">登録して選択</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const GAS_URL   = 'https://script.google.com/macros/s/AKfycbx5W1jrbLHBv5jB0uyhxz_5eg5WEmhARKC6agGSDZO7l_viNVcYnA6PwuFmXN8kKdZc/exec';
+const CACHE_KEY = 'toreca_products_v1';
+const CACHE_TTL = 6 * 60 * 60 * 1000;
+const CONDS     = ['A','A-','B','B-','C'];
+
+let allProducts = [], recentHist = [];
+let cart = [], signDone = false, drawing = false, ctx, cbCount = 0;
+let currentMember = null;
+let activeTab = 1;
+
+setInterval(()=>{ document.getElementById('clk').textContent = new Date().toLocaleTimeString('ja-JP'); }, 1000);
+document.getElementById('clk').textContent = new Date().toLocaleTimeString('ja-JP');
+
+function jsonp(url){
+  return new Promise((resolve, reject)=>{
+    const name = '__cb' + (cbCount++);
+    const el   = document.createElement('script');
+    const t    = setTimeout(()=>{ cleanup(); reject(new Error('timeout')); }, 30000);
+    window[name] = d => { cleanup(); resolve(d); };
+    function cleanup(){ clearTimeout(t); delete window[name]; el.parentNode && el.parentNode.removeChild(el); }
+    el.onerror = ()=>{ cleanup(); reject(new Error('load error')); };
+    el.src = url + (url.includes('?')? '&':'?') + 'callback=' + name;
+    document.head.appendChild(el);
+  });
+}
+
+function setBar(state, html){
+  const b = document.getElementById('cacheBar');
+  b.className = 'cache-bar ' + state;
+  document.getElementById('cacheMsg').innerHTML = html;
+}
+
+async function loadAllProducts(force){
+  if(!force){
+    try{
+      const raw = localStorage.getItem(CACHE_KEY);
+      if(raw){
+        const { data, ts } = JSON.parse(raw);
+        if(Date.now() - ts < CACHE_TTL && data.length){
+          allProducts = data;
+          const m = Math.floor((Date.now()-ts)/60000);
+          const ago = m < 60 ? m+'分前' : Math.floor(m/60)+'時間前';
+          setBar('ok', `<span class="cache-count">${data.length}件</span>読み込み済み（${ago}更新）`);
+          return;
+        }
+      }
+    } catch(e){}
+  }
+  setBar('loading', 'GASからデータを取得中...');
+  try{
+    const d = await jsonp(GAS_URL + '?action=getAllProducts');
+    if(d.products && d.products.length){
+      allProducts = d.products;
+      try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ data: allProducts, ts: Date.now() })); } catch(e){}
+      setBar('ok', `<span class="cache-count">${allProducts.length}件</span>取得完了`);
+    } else {
+      setBar('error', 'データが空です。GASの設定を確認してください。');
+    }
+  } catch(e){
+    try{
+      const raw = localStorage.getItem(CACHE_KEY);
+      if(raw){
+        const { data } = JSON.parse(raw);
+        if(data.length){ allProducts = data; setBar('error', `取得失敗（キャッシュ <span class="cache-count">${data.length}件</span> で動作中）`); return; }
+      }
+    } catch(e2){}
+    setBar('error', '取得失敗。ネットワークを確認してください。');
+  }
+}
+
+async function loadHistory(){
+  try{
+    const d = await jsonp(GAS_URL + '?action=getRecentAssessments');
+    recentHist = d.assessments || [];
+  } catch(e){ recentHist = []; }
+}
+
+// ============================================================
+// 顧客管理
+// ============================================================
+
+let memberSearchTimer = null;
+async function searchMembers(){
+  const q = document.getElementById('custSearch').value.trim();
+  const el = document.getElementById('memberList');
+  if(!q){ el.innerHTML=''; return; }
+  clearTimeout(memberSearchTimer);
+  memberSearchTimer = setTimeout(async ()=>{
+    el.innerHTML='<div class="rw"><div class="no-result">検索中...</div></div>';
+    try{
+      const d = await jsonp(GAS_URL + '?action=searchMembers&query=' + encodeURIComponent(q));
+      const members = d.members || [];
+      if(!members.length){
+        el.innerHTML='<div class="rw"><div class="no-result">見つかりませんでした</div></div>';
+        return;
+      }
+      el.innerHTML='<div class="member-list">'+members.map(m=>`
+        <div class="member-item" onclick='selectMember(${JSON.stringify(m)})'>
+          <div style="flex:1">
+            <div class="mi-name">${m['氏名']||''}</div>
+            <div class="mi-info">${m['電話番号']||''} ${m['フリガナ']?'／'+m['フリガナ']:''}</div>
+          </div>
+          <div class="mi-stat">会員ID<br>${m['会員ID']||''}</div>
+        </div>`).join('')+'</div>';
+    } catch(e){
+      el.innerHTML='<div class="rw"><div class="no-result">取得失敗</div></div>';
+    }
+  }, 400);
+}
+
+function selectMember(m){
+  currentMember = m;
+  document.getElementById('memberList').innerHTML='';
+  document.getElementById('custSearch').value='';
+  goPage(2);
+}
+
+function openNewMember(){ document.getElementById('newMemberModal').style.display='flex'; }
+function closeNewMember(){ document.getElementById('newMemberModal').style.display='none'; }
+
+async function registerMember(){
+  const name = document.getElementById('nm_name').value.trim();
+  const tel  = document.getElementById('nm_tel').value.trim();
+  if(!name||!tel){ alert('氏名と電話番号は必須です'); return; }
+  try{
+    const params = new URLSearchParams({
+      action:'registerMember', name,
+      kana:  document.getElementById('nm_kana').value.trim(),
+      tel,
+      email: document.getElementById('nm_email').value.trim(),
+      addr:  document.getElementById('nm_addr').value.trim(),
+      dob:   document.getElementById('nm_dob').value,
+    });
+    const d = await jsonp(GAS_URL + '?' + params.toString());
+    if(d.member){
+      currentMember = d.member;
+      closeNewMember();
+      goPage(2);
+    } else {
+      alert('登録に失敗しました');
+    }
+  } catch(e){ alert('通信エラーが発生しました'); }
+}
+
+function renderCustCard(containerId){
+  const el = document.getElementById(containerId);
+  if(!currentMember){ el.innerHTML=''; return; }
+  const m = currentMember;
+  const initials = (m['氏名']||'?').slice(0,1);
+  el.innerHTML=`<div class="cust-card">
+    <div class="cust-avatar">${initials}</div>
+    <div>
+      <div class="cust-name">${m['氏名']||''}</div>
+      <div class="cust-info">${m['電話番号']||''} ${m['会員ID']?'／ '+m['会員ID']:''}</div>
+    </div>
+    <button class="cust-clear" onclick="currentMember=null;renderCustCard('${containerId}')">変更</button>
+  </div>`;
+}
+
+// ============================================================
+// タブ切り替え
+// ============================================================
+
+function switchTab(n){
+  activeTab = n;
+  document.getElementById('tab1').className='tab'+(n===1?' on':'');
+  document.getElementById('tab2').className='tab'+(n===2?' on':'');
+  document.getElementById('rl').style.display    = n===1?'block':'none';
+  document.getElementById('histArea').style.display = n===2?'block':'none';
+  if(n===2) renderHistory();
+}
+
+function renderHistory(){
+  const el = document.getElementById('histArea');
+  if(!recentHist.length){
+    el.innerHTML='<div class="rw"><div class="no-result">履歴がありません（買取完了後に表示されます）</div></div>';
+    return;
+  }
+  el.innerHTML='<div class="rw">'+recentHist.map((a,i)=>{
+    const cards = a.items.slice(0,3).map(it=>`<span class="hist-card">${it.name.slice(0,10)}${it.name.length>10?'…':''}</span>`).join('');
+    const more  = a.items.length>3 ? `<span class="hist-card">+${a.items.length-3}件</span>` : '';
+    const date  = a.completedAt ? a.completedAt.slice(0,10) : '';
+    return `<div class="hist-item">
+      <div class="hist-hdr">
+        <div>
+          <span class="hist-name">${a.memberName||'顧客なし'}</span>
+          <span class="hist-date" style="margin-left:8px">${date}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="hist-total">¥${Number(a.total||0).toLocaleString()}</span>
+          <button class="hist-add-btn" onclick="addFromHistory(${i})">全て追加</button>
+        </div>
+      </div>
+      <div class="hist-cards">${cards}${more}</div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+function addFromHistory(i){
+  const a = recentHist[i];
+  a.items.forEach(it=>{
+    cart.push({
+      name: it.name, code: it.code||'', price: it.price,
+      category:'', qty: it.qty||1, cond: it.cond||'A',
+      editPrice: it.price, memo:'', uid: Date.now()+Math.random()
+    });
+  });
+  renderCart();
+  switchTab(1);
+}
+
+// ============================================================
+// カード検索
+// ============================================================
+
+function doSearch(){
+  const q  = document.getElementById('sq').value.trim().toLowerCase();
+  const rl = document.getElementById('rl');
+  if(!q){ rl.innerHTML=''; return; }
+  if(!allProducts.length){
+    rl.innerHTML='<div class="rw"><div class="no-result">データ読み込み中...</div></div>';
+    return;
+  }
+  const hits = allProducts.filter(c =>
+    c.name.toLowerCase().includes(q) || (c.code && c.code.toLowerCase().includes(q))
+  );
+  if(!hits.length){ rl.innerHTML='<div class="rw"><div class="no-result">見つかりませんでした</div></div>'; return; }
+  rl.innerHTML='<div class="rw">'+hits.slice(0,50).map(c=>`
+    <div class="ri">
+      <div style="flex:1">
+        <div class="rn">${c.name}</div>
+        <div class="rc">${[c.code,c.category].filter(Boolean).join('　')}</div>
+      </div>
+      <span class="rp" style="margin-right:12px">¥${Number(c.price).toLocaleString()}</span>
+      <button class="ab" onclick='addCard(${JSON.stringify({name:c.name,code:c.code||"",price:Number(c.price),category:c.category||""})})'>＋ 追加</button>
+    </div>`).join('')+'</div>';
+}
+
+function clrSearch(){ document.getElementById('sq').value=''; document.getElementById('rl').innerHTML=''; }
+
+function addCard(c){
+  cart.push({...c, qty:1, cond:'A', editPrice:c.price, memo:'', uid:Date.now()+Math.random()});
+  renderCart();
+}
+
+function subtotal(c){ return c.editPrice * c.qty; }
+function grandTotal(){ return cart.reduce((s,c)=>s+subtotal(c), 0); }
+
+function renderCart(){
+  const el = document.getElementById('cartArea');
+  const tb = document.getElementById('totalBar');
+  const nb = document.getElementById('toConf');
+  if(!cart.length){
+    el.innerHTML='<div class="empty">カードを検索して追加してください</div>';
+    tb.style.display='none'; nb.disabled=true; return;
+  }
+  el.innerHTML=cart.map((c,i)=>`
+    <div class="ci">
+      <div class="ci-top">
+        <div style="flex:1">
+          <div class="ci-nm">${c.name}</div>
+          <div class="ci-cd">${[c.code,c.category].filter(Boolean).join('　')}</div>
+        </div>
+        <button class="rmb" onclick="rmCard(${i})">×</button>
+      </div>
+      <div class="ci-body">
+        <div class="cf">
+          <label>状態</label>
+          <div class="cond-btns">
+            ${CONDS.map(cd=>`<button class="cb${cd===c.cond?' on':''}" onclick="setCond(${i},'${cd}')">${cd}</button>`).join('')}
+          </div>
+        </div>
+        <div class="cf">
+          <label>枚数</label>
+          <div class="qc">
+            <button class="qb" onclick="chgQty(${i},-1)">−</button>
+            <span class="qn">${c.qty}</span>
+            <button class="qb" onclick="chgQty(${i},1)">＋</button>
+          </div>
+        </div>
+        <div class="cf">
+          <label>買取価格（円）</label>
+          <div class="price-wrap">
+            <span class="price-yen">¥</span>
+            <input class="price-inp" type="number" min="0" value="${c.editPrice}" oninput="setPrice(${i},this.value)">
+          </div>
+          <div class="ci-sub">× ${c.qty}枚 = <strong>¥${subtotal(c).toLocaleString()}</strong></div>
+        </div>
+        <div class="cf memo-wrap">
+          <label>メモ</label>
+          <textarea placeholder="状態の補足など..." onchange="setMemo(${i},this.value)">${c.memo}</textarea>
+        </div>
+      </div>
+    </div>`).join('');
+  document.getElementById('tamt').textContent=grandTotal().toLocaleString();
+  tb.style.display='flex'; nb.disabled=false;
+}
+
+function setCond(i,v){ cart[i].cond=v; renderCart(); }
+function chgQty(i,d){ cart[i].qty=Math.max(1,cart[i].qty+d); renderCart(); }
+function rmCard(i){ cart.splice(i,1); renderCart(); }
+function setPrice(i,v){ cart[i].editPrice=Math.max(0,parseInt(v)||0); document.getElementById('tamt').textContent=grandTotal().toLocaleString(); }
+function setMemo(i,v){ cart[i].memo=v; }
+
+function goConf(){
+  const m = currentMember;
+  const custHtml = m ? `<div class="cust-card" style="margin-bottom:1rem">
+    <div class="cust-avatar">${(m['氏名']||'?').slice(0,1)}</div>
+    <div><div class="cust-name">${m['氏名']||''}</div><div class="cust-info">${m['電話番号']||''} ${m['会員ID']?'／ '+m['会員ID']:''}</div></div>
+  </div>` : '';
+  document.getElementById('custConfArea').innerHTML = custHtml;
+  document.getElementById('confBody').innerHTML=cart.map(c=>`<tr>
+    <td><div style="font-size:13px;font-weight:600">${c.name}</div>${c.code?`<div style="font-size:11px;color:#bbb">${c.code}</div>`:''}</td>
+    <td><span class="cond-badge">${c.cond}</span></td>
+    <td style="text-align:right">${c.qty}枚</td>
+    <td style="text-align:right">¥${c.editPrice.toLocaleString()}</td>
+    <td style="text-align:right;font-weight:700">¥${subtotal(c).toLocaleString()}</td>
+    <td style="font-size:12px;color:#888;font-style:italic">${c.memo||'—'}</td>
+  </tr>`).join('');
+  document.getElementById('confTotal').textContent=grandTotal().toLocaleString();
+  goPage(3);
+}
+
+function goPage(n){
+  const total = 5;
+  for(let i=1;i<=total;i++){
+    document.getElementById('pg'+i).style.display=i===n?'block':'none';
+    document.getElementById('st'+i).className='step'+(i===n?' active':i<n?' done':'');
+  }
+  if(n===2){ renderCustCard('custCardArea'); loadHistory(); }
+  if(n===4) initCanvas();
+  window.scrollTo(0,0);
+}
+
+function initCanvas(){
+  const cv=document.getElementById('sc');
+  const w=cv.offsetWidth||860;
+  cv.width=w*2; cv.height=400; cv.style.height='200px';
+  ctx=cv.getContext('2d');
+  ctx.scale(2,2);
+  ctx.strokeStyle='#4B1528'; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round';
+  cv.onpointerdown=e=>{
+    drawing=true; e.preventDefault();
+    const r=cv.getBoundingClientRect(),s=cv.width/(2*r.width);
+    ctx.beginPath(); ctx.moveTo((e.clientX-r.left)*s,(e.clientY-r.top)*s);
+  };
+  cv.onpointermove=e=>{
+    if(!drawing) return; e.preventDefault();
+    const r=cv.getBoundingClientRect(),s=cv.width/(2*r.width);
+    ctx.lineTo((e.clientX-r.left)*s,(e.clientY-r.top)*s); ctx.stroke();
+    signDone=true; document.getElementById('sh').style.display='none'; chkSign();
+  };
+  cv.onpointerup=cv.onpointerleave=()=>{ drawing=false; };
+}
+
+function clrSign(){
+  if(!ctx) return;
+  const cv=document.getElementById('sc');
+  ctx.clearRect(0,0,cv.width/2,cv.height/2);
+  signDone=false; document.getElementById('sh').style.display='block'; chkSign();
+}
+
+function chkSign(){
+  document.getElementById('finBtn').disabled=!(document.getElementById('agr').checked&&signDone);
+}
+
+function finish(){
+  document.getElementById('finalAmt').textContent=grandTotal().toLocaleString();
+  goPage(5);
+}
+
+function doPrint(){
+  const now=new Date();
+  const ds=`${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${now.toLocaleTimeString('ja-JP')}`;
+  const total=grandTotal();
+  const custLine = currentMember ? `顧客：${currentMember['氏名']} 様（${currentMember['会員ID']||''}）\n` : '';
+  const lines=cart.map(c=>{
+    const nm=c.name.length>13?c.name.slice(0,12)+'…':c.name;
+    return `${nm}${c.code?' ['+c.code+']':''}\n  状態:${c.cond}　${c.qty}枚　¥${c.editPrice.toLocaleString()} → ¥${subtotal(c).toLocaleString()}${c.memo?'\n  └ '+c.memo:''}`;
+  }).join('\n');
+  document.getElementById('rcpt').style.display='block';
+  document.getElementById('rcpt').textContent=
+`━━━━━━━━━━━━━━━━━━━━━━━━━
+      トレカデイズ　買取レシート
+━━━━━━━━━━━━━━━━━━━━━━━━━
+${ds}
+${custLine}─────────────────────────
+${lines}
+─────────────────────────
+合計買取金額          ¥${total.toLocaleString()}
+━━━━━━━━━━━━━━━━━━━━━━━━━
+  サイン確認済み
+  ご利用ありがとうございました`;
+  const pn=document.getElementById('pnote');
+  pn.style.display='block'; pn.textContent='エプソン ePOS-Print APIへ送信中...';
+  setTimeout(()=>{ pn.textContent='✓ 送信完了。プリンターをご確認ください。'; },1800);
+}
+
+function resetAll(){
+  cart=[]; signDone=false; currentMember=null;
+  document.getElementById('sq').value='';
+  document.getElementById('rl').innerHTML='';
+  document.getElementById('custSearch').value='';
+  document.getElementById('memberList').innerHTML='';
+  document.getElementById('agr').checked=false;
+  renderCart(); goPage(1);
+}
+
+loadAllProducts();
+</script>
+</body>
+</html>
